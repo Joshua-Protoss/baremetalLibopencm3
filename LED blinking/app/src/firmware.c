@@ -20,7 +20,6 @@ static uint64_t get_ticks(void) {   // static avoid compiler complaining about t
 }
 
 static void rcc_setup(void){
-
    rcc_clock_setup_pll(&rcc_hsi_configs[RCC_CLOCK_3V3_84MHZ]);
 }
 
@@ -35,19 +34,20 @@ static void systick_setup(void) {
     systick_interrupt_enable();
 }
 
-static void delay_cycles(uint32_t cycles) {
-    for (uint32_t i = 0; i < cycles; i++) {
-        __asm__("nop");
-    }
-    
-}
+
 int main(void) {
     rcc_setup();
     gpio_setup();
+    systick_setup();
+
+    uint64_t start_time = get_ticks();
 
     while (1) {
-        gpio_toggle(LED_PORT, LED_PIN);
-        delay_cycles(84000000 / 4);
+        if (get_ticks() - start_time >= 1000) {
+            gpio_toggle(LED_PORT, LED_PIN);
+            start_time = get_ticks();
+        }
+    
     }
     
     return 0;
