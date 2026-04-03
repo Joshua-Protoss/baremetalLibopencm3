@@ -7,7 +7,8 @@
 static void jump_to_main(void) {
     typedef void (*void_fn) (void);
     uint32_t* main_vector_table = (uint32_t*) (MAIN_APP_START_ADDRESS);
-    void_fn jump_fn = (void_fn) main_vector_table[1];
+    void_fn jump_fn = (void_fn) main_vector_table[1]; // you can replace 1 with #define reset_vector to make it more intuitive
+
 
     jump_fn();
 }
