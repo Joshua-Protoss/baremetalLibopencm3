@@ -127,5 +127,5 @@ void comms_read(comms_packet_t* packet){
 }
 
 uint8_t comms_compute_crc(comms_packet_t* packet){
-    return crc8((uint8_t*) &packet, PACKET_LENGTH - PACKET_CRC_BYTES);
+    return crc8((uint8_t*) packet, PACKET_LENGTH - PACKET_CRC_BYTES);
 }
