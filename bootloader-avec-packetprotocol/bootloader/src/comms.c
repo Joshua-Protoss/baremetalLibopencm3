@@ -64,7 +64,7 @@ void comms_setup(void){
 }
 
 void comms_update(void){
-    while (uart_data_available) {
+    while (uart_data_available()) {
       switch (state) {
         case CommsState_length: {
             temporary_packet.length = uart_read_byte();
@@ -92,7 +92,7 @@ void comms_update(void){
             }
 
             if (comms_is_sByte_packet(&temporary_packet, PACKET_RETX_DATA0)) {
-                coms_write(&last_transmitted_packet);
+                comms_write(&last_transmitted_packet);
                 state = CommsState_length;
                 break;
             }
@@ -101,9 +101,13 @@ void comms_update(void){
                 state = CommsState_length;
                 break;
             }
-
+            // what if ring-buffer run out of memory?
+            uint32_t next_write_index = (packet_write_index + 1) & packet_buffer_mask;
+            if (next_write_index == packet_read_index) {
+                __asm__("BKPT #0");
+            }
             comms_packet_copy(&temporary_packet, &packet_buffer[packet_write_index]);
-            packet_write_index = (packet_write_index + 1) & packet_buffer_mask;
+            packet_write_index = next_write_index;
             comms_write(&ack_packet);
             state = CommsState_length;
         } break;
@@ -120,10 +124,12 @@ bool comms_packets_available(void){
 
 void comms_write(comms_packet_t* packet){
     uart_write((uint8_t*)packet, PACKET_LENGTH);
+    comms_packet_copy(packet, &last_transmitted_packet);
 }
 
 void comms_read(comms_packet_t* packet){
-    
+    comms_packet_copy(&packet_buffer[packet_read_index], packet);
+    packet_read_index = (packet_read_index + 1) & packet_buffer_mask;
 }
 
 uint8_t comms_compute_crc(comms_packet_t* packet){
