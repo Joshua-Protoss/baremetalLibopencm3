@@ -11,7 +11,7 @@ const PACKET_ACK_DATA0      = 0x15;
 const PACKET_RETX_DATA0     = 0x19;
 
 // Details about the serial port connection
-const serialPath            = "/dev/ttyUSB0";
+const serialPath            = "COM4";
 const baudRate              = 115200;
 
 // CRC8 implementation
@@ -27,6 +27,7 @@ const crc8 = (data: Buffer | Array<number>) => {
         crc = (crc << 1) & 0xff;
       }
     }
+    // console.log('0x${byte.toString(16)} 0x${crc.toString(16)}')
   }
 
   return crc;
@@ -117,7 +118,7 @@ uart.on('data', data => {
   if (rxBuffer.length >= PACKET_LENGTH) {
     console.log(`Building a packet`);
     const raw = consumeFromBuffer(PACKET_LENGTH);
-    const packet = new Packet(raw[0], raw.slice(1, 1+PACKET_DATA_BYTES), raw[PACKET_CRC_INDEX]);
+    const packet = new Packet(raw[0]!, raw.slice(1, 1+PACKET_DATA_BYTES), raw[PACKET_CRC_INDEX]);
     const computedCrc = packet.computeCrc();
 
     // Need retransmission?
@@ -143,6 +144,7 @@ uart.on('data', data => {
     // Otherwise write the packet in to the buffer, and send an ack
     console.log(`Storing packet and ack'ing`);
     packets.push(packet);
+
     writePacket(Packet.ack);
   }
 });
