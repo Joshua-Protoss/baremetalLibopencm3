@@ -1,0 +1,14 @@
+## Tests to run
+- sending a regular packet, with ack in return (Proved)
+- sending a corrupted packet, with a retx request (proved)
+  (packet.crc++ in the bootloader.c, check wether comms update go to 
+   commsState_CRC --> comms_is_sByte_packet --> packet_retx_data0
+   comms_write(&last_transmitted_packet); in the debugger write this:
+   set last_transmitted_packet.crc = last_transmitted_packet - 1
+   or just change it directly in static) (put breakpoint in comstate_crc (comms.c)
+   and comms_update (bootloader.c)
+- receiving a regular packet (Proved) (we did receive retransmit and ack) 
+  put breakpoint in if(comms_packet_available) comms_read (bootloader.c)
+  and comms update, and commstate_crc (comms.c)
+- receiving a corrupted packet (Proved)
+  make index.ts : packetToSend.crc++;   // corrupt packet deliberately
