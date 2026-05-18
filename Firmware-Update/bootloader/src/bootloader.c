@@ -219,6 +219,8 @@ int main(void) {
              } break;
              case  BL_State_EraseApplication: {
                 bl_flash_erase_main_application();
+                comms_create_sByte_packet(&temp_packet, BL_PACKET_READY_FOR_DATA_DATA0);
+                comms_write(&temp_packet);
                 simple_timer_reset(&timer);
                 state = BL_State_ReceiveFirmware;
              } break;
@@ -228,13 +230,15 @@ int main(void) {
                     // 0 representing 1 byte in the packet, 15 representing 16
                     const uint8_t packet_length = (temp_packet.length & 0x0f) + 1;
                     bl_flash_write(MAIN_APP_START_ADDRESS + bytes_written, temp_packet.data, packet_length);
-                    bytes_written += packet_length;
-
+                    bytes_written += packet_length; 
                     simple_timer_reset(&timer);
                     if (bytes_written >= fw_length) {
                         comms_create_sByte_packet(&temp_packet, BL_PACKET_UPDATE_SUCCESSFUL_DATA0);
                         comms_write(&temp_packet);
                         state = BL_State_Done;
+                    } else {
+                        comms_create_sByte_packet(&temp_packet, BL_PACKET_READY_FOR_DATA_DATA0);
+                        comms_write(&temp_packet);
                     }
                 } else {
                     check_for_timeout();
