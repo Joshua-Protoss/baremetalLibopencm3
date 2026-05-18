@@ -3,8 +3,6 @@
 #include <libopencm3/stm32/rcc.h>
 #include "core/system.h"
 
-
-
 static volatile uint64_t ticks = 0; // there is a problem in using 64 bit operations on 32 bit MCU
                              // it will take 2 assembly instructions, you need to disable other interrupts while in the function then turn it back on after
 void sys_tick_handler(void) {
