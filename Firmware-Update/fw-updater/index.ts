@@ -254,7 +254,7 @@ const main = async () => {
   await waitForSingleBytePacket(BL_PACKET_FW_UPDATE_RES_DATA0); // problem
   Logger.success('Firmware update request accepted');
 
-  Logger.success('Waiting for device ID request...');
+  Logger.info('Waiting for device ID request...');
   await waitForSingleBytePacket(BL_PACKET_DEVICE_ID_REQ_DATA0);
   
   const deviceIDPacket = new Packet(2, Buffer.from([BL_PACKET_DEVICE_ID_RES_DATA0, DEVICE_ID]));
