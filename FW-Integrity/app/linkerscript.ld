@@ -41,7 +41,6 @@ SECTIONS
         KEEP(*(.bootloader_section))
 		*(.vectors)	/* Vector table */
 		KEEP(*(.firmware_info))
-		KEEP(*(.firmware_signature))
 		. = ALIGN(16);
 		*(.text*)	/* Program code */
 		. = ALIGN(4);
