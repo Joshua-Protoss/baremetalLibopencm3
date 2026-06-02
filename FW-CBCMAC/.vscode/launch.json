@@ -1,0 +1,35 @@
+{
+  "configurations": [
+
+    {
+      "name": "Debug app with openocd",
+      "cwd": "${workspaceFolder}/app",
+      "executable": "./firmware.elf",
+      "servertype": "openocd",
+      "request": "launch",
+      "type": "cortex-debug",
+      "device": "STM32F411RE",
+      "runToEntryPoint": "main",
+      "interface": "swd",
+      "configFiles": [
+        "interface/stlink.cfg",
+        "target/stm32f4x.cfg"
+      ]
+    },
+    {
+      "name": "Debug Bootloader with openocd",
+      "cwd": "${workspaceFolder}/bootloader",
+      "executable": "./bootloader.elf",
+      "servertype": "openocd",
+      "request": "launch",
+      "type": "cortex-debug",
+      "device": "STM32F411RE",
+      "runToEntryPoint": "main",
+      "interface": "swd",
+      "configFiles": [
+        "interface/stlink.cfg",
+        "target/stm32f4x.cfg"
+      ]
+    }
+  ]
+}
